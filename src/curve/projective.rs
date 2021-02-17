@@ -427,15 +427,14 @@ where
         n: &[u8],
         curve: C,
     ) -> Self {
-        let mut a: Point<FE> = self.clone();
         let mut q: Point<FE> = Point::infinity();
 
-        for digit in n.iter().rev() {
-            for i in 0..8 {
+        for digit in n.iter().skip_while(|digit| **digit == 0) {
+            for i in (0..8).rev() {
+                q = q.double(curve);
                 if digit & (1 << i) != 0 {
-                    q = q.add_or_double(&a, curve);
+                    q = q.add_or_double(self, curve);
                 }
-                a = a.double(curve)
             }
         }
         q
@@ -447,15 +446,14 @@ where
         n: &[u8],
         curve: C,
     ) -> Self {
-        let mut a: Point<FE> = self.clone();
         let mut q: Point<FE> = Point::infinity();
 
-        for digit in n.iter().rev() {
-            for i in 0..8 {
+        for digit in n.iter().skip_while(|digit| **digit == 0) {
+            for i in (0..8).rev() {
+                q = q.double_a0(curve);
                 if digit & (1 << i) != 0 {
-                    q = q.add_or_double_a0(&a, curve);
+                    q = q.add_or_double_a0(self, curve);
                 }
-                a = a.double_a0(curve)
             }
         }
         q
